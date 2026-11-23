@@ -80,12 +80,19 @@ public:
         beginTest ("While playing, the picture advances between audio blocks");
         host.isPlaying = true;
         host.songSeconds = 0.5;
+        const auto blockTime = juce::Time::getMillisecondCounterHiRes();
         processBlock (processor);
         const auto startFrame = processor.advancePicture().frameIndex;
         juce::Thread::sleep (100);
         const auto laterFrame = processor.advancePicture().frameIndex;
+
+        // Sleeps overrun on busy machines, so bound the advance by the time that really passed
+        // (capped where the clock stops extrapolating without new blocks).
+        const auto elapsedSeconds = std::min (0.25, (juce::Time::getMillisecondCounterHiRes() - blockTime) / 1000.0);
+        const auto maximumAdvance = (int64_t) std::ceil (elapsedSeconds * 24.0) + 1;
         expect (startFrame >= 12 && startFrame <= 13, "start frame " + juce::String (startFrame));
-        expect (laterFrame >= startFrame + 2 && laterFrame <= startFrame + 4, "later frame " + juce::String (laterFrame));
+        expect (laterFrame >= startFrame + 2 && laterFrame <= startFrame + maximumAdvance,
+                "later frame " + juce::String (laterFrame) + " after " + juce::String (elapsedSeconds, 3) + " s");
         host.isPlaying = false;
 
         beginTest ("Saved state restores the movie and placement");
