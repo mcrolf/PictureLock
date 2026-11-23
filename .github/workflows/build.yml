@@ -1,0 +1,143 @@
+name: Build
+
+on:
+  push:
+    branches: ["**"]
+    tags: ["v*"]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  macos:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install nasm
+        run: brew install nasm
+
+      - name: Cache FFmpeg
+        id: ffmpeg-cache
+        uses: actions/cache@v4
+        with:
+          path: .deps/ffmpeg-install
+          key: ffmpeg-macos-${{ hashFiles('scripts/build-ffmpeg.sh') }}
+
+      - name: Build FFmpeg
+        if: steps.ffmpeg-cache.outputs.cache-hit != 'true'
+        run: scripts/build-ffmpeg.sh
+
+      - name: Configure
+        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64"
+
+      - name: Build
+        run: cmake --build build --config Release --parallel
+
+      - name: Test
+        run: ctest --test-dir build -C Release --output-on-failure
+
+      - name: Package
+        run: scripts/package-macos.sh
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: PictureLock-macOS
+          path: dist/*.pkg
+          if-no-files-found: error
+
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Cache FFmpeg
+        id: ffmpeg-cache
+        uses: actions/cache@v4
+        with:
+          path: .deps/ffmpeg-install
+          key: ffmpeg-windows-${{ hashFiles('scripts/build-ffmpeg.sh') }}
+
+      # Puts cl.exe, link.exe and the INCLUDE/LIB variables in the environment for MSYS2.
+      - uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: x64
+
+      - uses: msys2/setup-msys2@v2
+        with:
+          msystem: MSYS
+          path-type: inherit
+          update: false
+          install: >-
+            make
+            diffutils
+            nasm
+            pkgconf
+
+      - name: Build FFmpeg
+        if: steps.ffmpeg-cache.outputs.cache-hit != 'true'
+        shell: msys2 {0}
+        env:
+          CHERE_INVOKING: "1"
+        run: |
+          # MSYS2's /usr/bin/link.exe would shadow MSVC's linker.
+          mv /usr/bin/link.exe /usr/bin/link-msys.exe || true
+          which cl link
+          scripts/build-ffmpeg.sh
+
+      - name: Configure
+        shell: pwsh
+        run: cmake -S . -B build -A x64
+
+      - name: Build
+        shell: pwsh
+        run: cmake --build build --config Release --parallel
+
+      - name: Test
+        shell: pwsh
+        run: ctest --test-dir build -C Release --output-on-failure
+
+      - name: Read version
+        id: version
+        shell: pwsh
+        run: |
+          $text = Get-Content CMakeLists.txt -Raw
+          if ($text -notmatch 'project\(PictureLock\s+VERSION\s+([0-9]+\.[0-9]+\.[0-9]+)') { throw "Version not found in CMakeLists.txt" }
+          "value=$($Matches[1])" >> $env:GITHUB_OUTPUT
+
+      - name: Build installer
+        shell: pwsh
+        run: |
+          if (-not (Get-Command iscc -ErrorAction SilentlyContinue)) {
+            choco install innosetup -y --no-progress
+            $env:PATH += ";${env:ProgramFiles(x86)}\Inno Setup 6"
+          }
+          iscc "/DAppVersion=${{ steps.version.outputs.value }}" packaging/windows/PictureLock.iss
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: PictureLock-Windows
+          path: dist/*.exe
+          if-no-files-found: error
+
+  release:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: [macos, windows]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: release-files
+          merge-multiple: true
+
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            release-files/*.pkg
+            release-files/*.exe
+          generate_release_notes: true
