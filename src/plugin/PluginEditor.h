@@ -39,6 +39,8 @@ private:
 
     PictureLockProcessor& pictureLock;
     PictureLockLookAndFeel lookAndFeel;
+    std::unique_ptr<juce::Drawable> logo = PictureLockLookAndFeel::createLogo();
+    juce::Rectangle<float> logoBounds;
 
     juce::TextButton openMovieButton { "Open Movie..." };
     juce::Label movieDescription;

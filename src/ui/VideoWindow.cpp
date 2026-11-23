@@ -16,6 +16,7 @@ VideoWindow::VideoWindow (PictureLockProcessor& p)
     pictureView = view.get();
 
     setUsingNativeTitleBar (true);
+    setIcon (PictureLockLookAndFeel::createLogoImage (64));
     setContentOwned (view.release(), false);
     setResizable (true, false);
     setResizeLimits (160, 90, 16384, 16384);
