@@ -27,6 +27,15 @@ double PicturePlacement::songSecondsAtPictureStart() const
     return (double) (pictureStartFrame - sessionStartFrame) / timecodeRate.framesPerSecond();
 }
 
+juce::String formatSongPosition (double seconds)
+{
+    const auto sign = seconds < 0 ? "-" : "";
+    const auto totalMilliseconds = (int64_t) std::llround (std::abs (seconds) * 1000.0);
+    return sign + juce::String (totalMilliseconds / 60000) + ":"
+         + juce::String ((totalMilliseconds / 1000) % 60).paddedLeft ('0', 2) + "."
+         + juce::String (totalMilliseconds % 1000).paddedLeft ('0', 3);
+}
+
 int64_t pictureFrameIndexAt (double pictureSeconds, double fileFramesPerSecond, int64_t fileFrameCount)
 {
     if (pictureSeconds < -frameBoundaryTolerance)

@@ -28,6 +28,9 @@ struct PicturePlacement
     double songSecondsAtPictureStart() const;
 };
 
+/** A song position as Live's time ruler shows it, e.g. "1:22.500". */
+juce::String formatSongPosition (double seconds);
+
 /** Index of the movie frame on screen at a picture time, or -1 outside the movie. */
 int64_t pictureFrameIndexAt (double pictureSeconds, double fileFramesPerSecond, int64_t fileFrameCount);
 
