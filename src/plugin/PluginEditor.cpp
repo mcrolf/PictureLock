@@ -10,15 +10,6 @@ namespace
     constexpr int headerHeight = 44;
     constexpr int readoutHeight = 56;
     constexpr int statusHeight = 26;
-
-    juce::String formatSongPosition (double seconds)
-    {
-        const auto sign = seconds < 0 ? "-" : "";
-        const auto totalMilliseconds = (int64_t) std::llround (std::abs (seconds) * 1000.0);
-        return sign + juce::String (totalMilliseconds / 60000) + ":"
-             + juce::String ((totalMilliseconds / 1000) % 60).paddedLeft ('0', 2) + "."
-             + juce::String (totalMilliseconds % 1000).paddedLeft ('0', 3);
-    }
 }
 
 PictureLockEditor::PictureLockEditor (PictureLockProcessor& p)
@@ -61,8 +52,8 @@ PictureLockEditor::PictureLockEditor (PictureLockProcessor& p)
         showStatus ("Movie not found: " + missing.getFullPathName(), palette::warning);
 
     setResizable (true, true);
-    setResizeLimits (640, 420, 2400, 1600);
-    setSize (900, 560);
+    setResizeLimits (640, 480, 2400, 1600);
+    setSize (900, 600);
 }
 
 PictureLockEditor::~PictureLockEditor()

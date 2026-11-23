@@ -39,6 +39,11 @@ public:
         expectEquals (placement.sessionTimecodeAt (10.5).toString(), juce::String ("01:00:00:00"));
         expectWithinAbsoluteError (placement.pictureSecondsAt (10.5), 0.0, 1.0e-9);
 
+        beginTest ("Song positions read like Live's time ruler");
+        expectEquals (formatSongPosition (22.0), juce::String ("0:22.000"));
+        expectEquals (formatSongPosition (83.5004), juce::String ("1:23.500"));
+        expectEquals (formatSongPosition (-1.25), juce::String ("-0:01.250"));
+
         beginTest ("23.976 timecode runs at the real 24000/1001 rate");
         PicturePlacement pulledDown { fps23_976, Timecode::fromFields (1, 0, 0, 0, fps23_976).frameCount(),
                                       Timecode::fromFields (1, 0, 0, 0, fps23_976).frameCount(), 0.0 };

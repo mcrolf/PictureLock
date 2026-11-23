@@ -13,7 +13,8 @@ namespace
 
 SettingsPanel::SettingsPanel (PictureLockProcessor& p) : processor (p)
 {
-    for (auto* label : { &timecodeRateLabel, &sessionStartLabel, &pictureStartLabel, &syncOffsetLabel })
+    for (auto* label : { &timecodeRateLabel, &sessionStartLabel, &pictureStartLabel, &pictureStartShortcutsLabel,
+                         &syncOffsetLabel, &pictureStartSongPosition })
     {
         label->setColour (juce::Label::textColourId, palette::mutedText);
         label->setFont (juce::FontOptions (13.0f));
@@ -41,8 +42,11 @@ SettingsPanel::SettingsPanel (PictureLockProcessor& p) : processor (p)
     pictureStartFromMovie.onClick = [this] { usePictureStartFromMovie(); };
     pictureStartAtPlayhead.setTooltip ("Start the picture at Live's current song position");
     pictureStartAtPlayhead.onClick = [this] { processor.placePictureStartAtPlayhead(); };
-    addAndMakeVisible (pictureStartFromMovie);
-    addAndMakeVisible (pictureStartAtPlayhead);
+    pictureStartAtSongStart.setTooltip ("Start the picture at song position 0 (bar 1)");
+    pictureStartAtSongStart.onClick = [this] { placePictureStartAtSongStart(); };
+
+    for (auto* button : { &pictureStartFromMovie, &pictureStartAtPlayhead, &pictureStartAtSongStart })
+        addAndMakeVisible (button);
 
     syncOffset.setTitle ("Sync offset in milliseconds");
     syncOffset.setRange (-syncOffsetSliderRangeMilliseconds, syncOffsetSliderRangeMilliseconds, 1.0);
@@ -103,6 +107,12 @@ void SettingsPanel::usePictureStartFromMovie()
             processor.settings().setPictureStart (*timecode);
 }
 
+void SettingsPanel::placePictureStartAtSongStart()
+{
+    const auto& placement = processor.settings().placement();
+    processor.settings().setPictureStart (Timecode (placement.sessionStartFrame, placement.timecodeRate));
+}
+
 void SettingsPanel::changeListenerCallback (juce::ChangeBroadcaster*)
 {
     showCurrentSettings();
@@ -125,6 +135,8 @@ void SettingsPanel::showCurrentSettings()
 
     const auto info = processor.movieInfo();
     pictureStartFromMovie.setEnabled (info && info->embeddedTimecode);
+    pictureStartSongPosition.setText ("Frame 1 plays at song position " + formatSongPosition (placement.songSecondsAtPictureStart()),
+                                      juce::dontSendNotification);
 
     syncOffset.setValue (settings.syncOffsetMilliseconds(), juce::dontSendNotification);
     const auto offsetFrames = settings.syncOffsetMilliseconds() / 1000.0 * placement.timecodeRate.framesPerSecond();
@@ -156,9 +168,13 @@ void SettingsPanel::resized()
 
     pictureStartLabel.setBounds (row (labelHeight));
     pictureStart.setBounds (row (rowHeight));
+    pictureStartSongPosition.setBounds (row (labelHeight));
+    pictureStartShortcutsLabel.setBounds (row (labelHeight));
     auto buttons = row (rowHeight);
-    pictureStartFromMovie.setBounds (buttons.removeFromLeft (buttons.getWidth() / 2 - 2));
-    pictureStartAtPlayhead.setBounds (buttons.removeFromRight (buttons.getWidth() - 4));
+    const auto buttonWidth = (buttons.getWidth() - 8) / 3;
+    pictureStartFromMovie.setBounds (buttons.removeFromLeft (buttonWidth));
+    pictureStartAtSongStart.setBounds (buttons.removeFromRight (buttonWidth));
+    pictureStartAtPlayhead.setBounds (buttons.reduced (4, 0));
     area.removeFromTop (gap);
 
     syncOffsetLabel.setBounds (row (labelHeight));

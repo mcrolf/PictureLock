@@ -19,8 +19,9 @@ It is a VST3 and Audio Unit effect. It passes audio through untouched and only r
 2. Click **Open Movie...** or drop a movie onto the plug-in window. QuickTime (`.mov`), MP4, MXF, Matroska and AVI files with ProRes, DNxHD/DNxHR, H.264, HEVC, MPEG-2, MJPEG, VP9 and similar codecs are supported.
 3. If the movie carries a start timecode (for example `01:00:00:00`), PictureLock uses it as the picture start and sets the session start to match, so the first frame lands at song position 0.
 4. Set **Session start** to the timecode you want at song position 0. For example, `00:59:52:00` gives you eight seconds of pre-roll before a `01:00:00:00` picture start.
-5. Click **Show Video Window** for a floating picture window. Double-click it to go full screen on the display it is on. Right-click it for Always on Top, Timecode Burn-in and size options. The window never takes keyboard focus, so the space bar still starts and stops Live.
-6. To use the production audio as a guide track, click **Export Guide Audio...**. PictureLock writes a stereo WAV at Live's sample rate that starts at the first picture frame, and tells you the song position to place it at. **Turn Warp off on that clip** or Live will stretch it when the tempo changes.
+5. Under **Picture start**, the plug-in shows the song position where frame 1 plays. To move the picture, type a timecode or use the shortcuts: **Movie TC** (the movie's own start timecode), **Playhead** (Live's current song position) or **Song Start** (song position 0, bar 1).
+6. Click **Show Video Window** for a floating picture window. Double-click it to go full screen on the display it is on. Right-click it for Always on Top, Timecode Burn-in and size options. The window never takes keyboard focus, so the space bar still starts and stops Live.
+7. To use the production audio as a guide track, click **Export Guide Audio...**. PictureLock writes a stereo WAV at Live's sample rate that starts at the first picture frame, and tells you the song position to place it at. **Turn Warp off on that clip** or Live will stretch it when the tempo changes.
 
 All settings, including the movie path and the window position, are saved with the Live Set.
 
