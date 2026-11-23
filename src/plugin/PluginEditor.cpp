@@ -10,6 +10,7 @@ namespace
     constexpr int headerHeight = 44;
     constexpr int readoutHeight = 56;
     constexpr int statusHeight = 26;
+    constexpr int logoSize = 32;
 
     juce::String formatSongPosition (double seconds)
     {
@@ -209,6 +210,9 @@ void PictureLockEditor::filesDropped (const juce::StringArray& files, int, int)
 void PictureLockEditor::paint (juce::Graphics& g)
 {
     g.fillAll (palette::background);
+
+    if (logo != nullptr)
+        logo->drawWithin (g, logoBounds, juce::RectanglePlacement::centred, 1.0f);
 }
 
 void PictureLockEditor::paintOverChildren (juce::Graphics& g)
@@ -227,6 +231,8 @@ void PictureLockEditor::resized()
     auto area = getLocalBounds().reduced (12);
 
     auto header = area.removeFromTop (headerHeight).reduced (0, 6);
+    logoBounds = header.removeFromLeft (logoSize).withSizeKeepingCentre (logoSize, logoSize).toFloat();
+    header.removeFromLeft (10);
     openMovieButton.setBounds (header.removeFromLeft (120));
     exportGuideAudioButton.setBounds (header.removeFromRight (170));
     header.removeFromRight (8);

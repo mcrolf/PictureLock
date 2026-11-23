@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <title>PictureLock</title>
+  <defs>
+    <linearGradient id="tile" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#262a30"/>
+      <stop offset="1" stop-color="#121417"/>
+    </linearGradient>
+    <linearGradient id="amber" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f7c25a"/>
+      <stop offset="1" stop-color="#e9a12c"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1024" height="1024" rx="224" fill="url(#tile)"/>
+
+  <!-- Lock shackle -->
+  <path d="M356 452 V352 a156 156 0 0 1 312 0 V452" fill="none" stroke="url(#amber)" stroke-width="80"/>
+
+  <!-- Film frame as the lock body, with sprocket holes and a picture area -->
+  <g fill-rule="evenodd">
+    <path fill="url(#amber)" d="
+      M268 420 h488 a56 56 0 0 1 56 56 v344 a56 56 0 0 1 -56 56 h-488 a56 56 0 0 1 -56 -56 v-344 a56 56 0 0 1 56 -56 z
+      M240 462 h40 v52 h-40 z  M240 552 h40 v52 h-40 z  M240 642 h40 v52 h-40 z  M240 732 h40 v52 h-40 z
+      M744 462 h40 v52 h-40 z  M744 552 h40 v52 h-40 z  M744 642 h40 v52 h-40 z  M744 732 h40 v52 h-40 z
+      M332 460 h360 a24 24 0 0 1 24 24 v328 a24 24 0 0 1 -24 24 h-360 a24 24 0 0 1 -24 -24 v-328 a24 24 0 0 1 24 -24 z"/>
+  </g>
+
+  <!-- Play triangle -->
+  <path fill="url(#amber)" d="M466 572 v156 a14 14 0 0 0 21 12 l132 -78 a14 14 0 0 0 0 -24 l-132 -78 a14 14 0 0 0 -21 12 z"/>
+</svg>

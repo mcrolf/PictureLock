@@ -20,6 +20,8 @@ juce_add_plugin(PictureLock
     PRODUCT_NAME "PictureLock"
     COMPANY_NAME "PictureLock"
     BUNDLE_ID "org.picturelock.plugin"
+    ICON_BIG "${CMAKE_CURRENT_SOURCE_DIR}/assets/logo/picturelock-icon-1024.png"
+    ICON_SMALL "${CMAKE_CURRENT_SOURCE_DIR}/assets/logo/picturelock-icon-256.png"
     PLUGIN_MANUFACTURER_CODE Pclk
     PLUGIN_CODE Pvid
     FORMATS VST3 AU Standalone
@@ -31,6 +33,10 @@ juce_add_plugin(PictureLock
     VST3_CATEGORIES Fx Tools
     AU_MAIN_TYPE kAudioUnitType_Effect
     COPY_PLUGIN_AFTER_BUILD FALSE)
+
+juce_add_binary_data(PictureLockAssets
+    NAMESPACE PictureLockAssets
+    SOURCES assets/logo/picturelock-icon.svg)
 
 # Sources shared by the plugin and the test app. Each target compiles them with its
 # own copy of the JUCE modules, as JUCE expects.
@@ -58,6 +64,7 @@ function(picturelock_configure_target target)
     target_compile_definitions(${target} PUBLIC
         JUCE_WEB_BROWSER=0 JUCE_USE_CURL=0 JUCE_VST3_CAN_REPLACE_VST2=0)
     target_link_libraries(${target} PRIVATE
+        PictureLockAssets
         PictureLock::FFmpeg
         juce::juce_audio_utils
         juce::juce_audio_formats

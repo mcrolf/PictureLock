@@ -1,5 +1,7 @@
 #include "LookAndFeel.h"
 
+#include <BinaryData.h>
+
 namespace picturelock
 {
 
@@ -26,6 +28,25 @@ PictureLockLookAndFeel::PictureLockLookAndFeel()
 juce::Font PictureLockLookAndFeel::timecodeFont (float height)
 {
     return juce::Font (juce::FontOptions (juce::Font::getDefaultMonospacedFontName(), height, juce::Font::bold));
+}
+
+std::unique_ptr<juce::Drawable> PictureLockLookAndFeel::createLogo()
+{
+    return juce::Drawable::createFromImageData (PictureLockAssets::picturelockicon_svg,
+                                                (size_t) PictureLockAssets::picturelockicon_svgSize);
+}
+
+juce::Image PictureLockLookAndFeel::createLogoImage (int size)
+{
+    juce::Image image (juce::Image::ARGB, size, size, true);
+
+    if (auto logo = createLogo())
+    {
+        juce::Graphics g (image);
+        logo->drawWithin (g, image.getBounds().toFloat(), juce::RectanglePlacement::centred, 1.0f);
+    }
+
+    return image;
 }
 
 } // namespace picturelock
