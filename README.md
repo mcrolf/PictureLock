@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="assets/logo/picturelock-icon.svg" alt="PictureLock logo: a padlock whose body is a film frame with a play button" width="160">
+</p>
+
 # PictureLock
 
 PictureLock is a video player plug-in for Ableton Live, built for film scoring and sound post-production. It shows a movie in sync with Live's transport, the way the video tracks in Pro Tools and Logic do: frame-accurate, locked to elapsed time, with a timecode burn-in and a separate window you can put on a second display.

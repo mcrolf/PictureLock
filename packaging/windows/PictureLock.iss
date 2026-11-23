@@ -16,6 +16,8 @@ AppPublisher=PictureLock
 DefaultDirName={autopf}\PictureLock
 DefaultGroupName=PictureLock
 LicenseFile=..\..\LICENSE
+SetupIconFile=..\..\assets\logo\picturelock.ico
+UninstallDisplayIcon={app}\picturelock.ico
 OutputDir=..\..\dist
 OutputBaseFilename=PictureLock-{#AppVersion}-Windows-Setup
 ArchitecturesAllowed=x64compatible
@@ -35,6 +37,7 @@ Name: "standalone"; Description: "Standalone app"; Types: full
 Source: "{#BuildDir}\VST3\PictureLock.vst3\*"; DestDir: "{commoncf64}\VST3\PictureLock.vst3"; Components: vst3; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "{#BuildDir}\Standalone\PictureLock.exe"; DestDir: "{app}"; Components: standalone; Flags: ignoreversion
 Source: "..\..\LICENSE"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\..\assets\logo\picturelock.ico"; DestDir: "{app}"; Flags: ignoreversion
 
 [Icons]
 Name: "{group}\PictureLock"; Filename: "{app}\PictureLock.exe"; Components: standalone

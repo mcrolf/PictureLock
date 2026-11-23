@@ -23,6 +23,10 @@ public:
     PictureLockLookAndFeel();
 
     static juce::Font timecodeFont (float height);
+
+    /** The PictureLock logo, drawn from the embedded SVG. */
+    static std::unique_ptr<juce::Drawable> createLogo();
+    static juce::Image createLogoImage (int size);
 };
 
 } // namespace picturelock
